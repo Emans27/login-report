@@ -59,7 +59,8 @@ while true; do
       echo "  Masukkan Bot Token dari @BotFather"
       printf '  Token (kosongkan utk batal): '; read -r t
       [ -z "$t" ] && continue
-      t=$(lr_sanitize "$t")
+      t=$(printf '%s' "$t" | tr -d ' \t\r\n')
+      [ -z "$t" ] && { lr_warn "Token kosong, dibatalkan"; continue; }
       lr_set_conf BOT_TOKEN "$t"; lr_log "BOT_TOKEN diperbarui (redacted)"
       printf '  Chat ID (mis. 1732345678): '; read -r cid
       cid=$(echo "$cid" | tr -d ' ')
