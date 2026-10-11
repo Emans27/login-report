@@ -58,6 +58,13 @@ lreport          # buka menu
 
 ## Mengatur timer
 
+### Lewat menu utama mytunnel (paling mudah)
+
+Jalankan `menu`, lalu ketik **10** (LOGIN REPORT). Menu ini sudah terpasang otomatis
+bila script tunneling yang kamu pakai sudah memuat login-report.
+
+### Lewat perintah `lreport`
+
 Cara paling mudah — lewat menu `lreport`:
 
 | Menu | Fungsi |

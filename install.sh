@@ -41,7 +41,7 @@ ok "Folder dibuat: $LR_BASE, $LR_ETC"
 say "▸ Pasang kode..."
 install -m 644 "$SRC/lib/common.sh"    "$LR_BASE/lib/common.sh"
 install -m 644 "$SRC/lib/collector.sh" "$LR_BASE/lib/collector.sh"
-install -m 644 "$SRC/lib/core.sh"      "$LR_BASE/lib/core.sh"
+install -m 755 "$SRC/lib/core.sh"      "$LR_BASE/lib/core.sh"
 install -m 755 "$SRC/menu.sh"          "$LR_BASE/menu.sh"
 install -m 755 "$SRC/uninstall.sh"     "$LR_BASE/uninstall.sh"
 ln -sf "$LR_BASE/menu.sh" /usr/local/bin/lreport

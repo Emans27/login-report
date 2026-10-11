@@ -22,7 +22,11 @@ say "  login-report uninstaller v$VERSION"
 hr
 
 # ── konfirmasi ─────────────────────────────────────────────
-if [ -t 0 ]; then
+# --yes untuk pemanggilan otomatis (mis. dari uninstall.sh mytunnel)
+ASSUME_YES=0
+for a in "$@"; do [ "$a" = "--yes" ] || [ "$a" = "-y" ] && ASSUME_YES=1; done
+
+if [ "$ASSUME_YES" = "0" ] && [ -t 0 ]; then
   read -r -p "Hapus login-report beserta config, timer, dan log? [y/N] " ans
   case "$ans" in
     y|Y|yes|YES) ;;
