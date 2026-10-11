@@ -1,0 +1,4 @@
+install.sh uninstall.sh menu.sh show_msgs.sh
+config.conf
+/var/log/login-report.log
+*.swp
