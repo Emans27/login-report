@@ -1,0 +1,53 @@
+#!/usr/bin/env bash
+# Blokir commit yang memuat secret: bot token, GitHub PAT, AWS key, private key,
+# chat ID. Data runtime (/etc/mytunnel/config/*, db/*, cert/*) memang tidak pernah
+# ada di repo, tapi guard ini menangkap salah-tempel dari VPS atau wizard.
+set -uo pipefail
+
+fail=0
+report() { printf '  %s\n' "$1" >&2; fail=1; }
+
+# pola digabung: <deskripsi>|<regex>
+PATTERNS='bot_token (Telegram bot token)|\b[0-9]{8,10}:AA[A-Za-z0-9_-]{30,}\b
+github_pat (GitHub PAT)|\bgh[pousr]_[A-Za-z0-9]{20,}\b
+aws_key (AWS access key)|\bAKIA[0-9A-Z]{16}\b
+private_key (private key)|-----BEGIN [A-Z ]*PRIVATE KEY-----
+admin_chat_id (Telegram chat ID)|\bADMIN_ID\s*=\s*"?[0-9]{8,12}"?'
+
+staged=$(git diff --cached --name-only --diff-filter=ACMR)
+
+for f in $staged; do
+    # lewati biner: bytes non-UTF8 / ada NUL
+    if git show ":$f" 2>/dev/null | LC_ALL=C grep -qP '\x00' 2>/dev/null; then
+        continue
+    fi
+    content=$(git show ":$f" 2>/dev/null)
+    while IFS= read -r entry; do
+        label=${entry%%|*}; rx=${entry#*|}
+        # dokumentasi yang memang harus pakai placeholder diizinkan
+        if printf '%s' "$content" \
+            | grep -aoE -- "$rx" \
+            | grep -avE '^<BOT_TOKEN>$|^<BOT_ID>$|^123456789:AAH\*+$|^xxx+$' \
+            | grep -q .; then
+            printf 'SECRET TERDETEKSI: %s\n  file: %s\n' "$label" "$f" >&2
+            printf '%s' "$content" | grep -anE -- "$rx" | head -3 | cut -c1-100 | sed 's/^/  /' >&2
+            report "  (isi bagian yang dicoret atau pakai placeholder)"
+        fi
+    done <<EOF
+$PATTERNS
+EOF
+done
+
+# path yang tidak boleh masuk repo sama sekali
+for f in $staged; do
+    case "$f" in
+        cert/*|*/private.key|*/bot.conf|db/*.txt|*/.env|*.pem|*.key)
+            report "PATH TERLARANG: $f";;
+    esac
+done
+
+if [ "$fail" -ne 0 ]; then
+    printf '\nCommit DITOLAK. Bersihkan secret di atas, lalu `git add` ulang.\n' >&2
+    exit 1
+fi
+exit 0

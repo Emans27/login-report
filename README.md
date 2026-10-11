@@ -103,7 +103,7 @@ Opsi `OnCalendar` yang dipakai:
 `/etc/login-report/config.conf` (chmod 600, root only):
 
 ```bash
-BOT_TOKEN="8496805098:AAxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+BOT_TOKEN="<BOT_TOKEN>"
 CHAT_ID="1234567890"
 
 ENABLED="on"                # on | off
@@ -121,7 +121,7 @@ INFO_COLUMNS=""             #mis: "port id quota"
 ```
 
 Token tidak pernah ditulis ke log. Di layar hanya ditampilkan sebagian:
-`8496805098:AAH****`.
+token bot ditampilkan tersamar (mis. `<BOT_TOKEN>`).
 
 ## Uninstall
 
